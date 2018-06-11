@@ -16,7 +16,6 @@ class PriorityQueue(object):
     def put(self, item: Tuple[int, int], priority: int) -> None:
         heapq.heappush(self.elements, (priority, item))
 
-    @property
     def get(self) -> Tuple[int, int]:
         return heapq.heappop(self.elements)[1]
 
@@ -57,6 +56,7 @@ def heuristic(start_node: Tuple[int, int], destination_node: Tuple[int, int]) ->
 
 
 class Graph(object):
+    _queue: PriorityQueue
     cost: Dict[Tuple[int, int], int]
     parent: Dict[Tuple[int, int], Tuple[int, int]]
 
@@ -71,7 +71,7 @@ class Graph(object):
         self.parent[start_node] = (-1, -1)
         self.cost[start_node] = 0
         while not self._queue.empty:
-            current: Tuple[int, int] = self._queue.get
+            current: Tuple[int, int] = self._queue.get()
             if current == goal_node:
                 break
             for child in diagram.neighbors(current):
@@ -94,23 +94,35 @@ def draw_tile(graph, co_ordinate, draw_description: dict) -> str:
     point: str = "."
     if 'cost' in draw_description and co_ordinate in draw_description['cost']:
         point = "%d" % draw_description['cost'][co_ordinate]
-    if 'parent' in draw_description and draw_description['parent'].get(co_ordinate, None) is not None:
+    if 'parent' in draw_description and  draw_description['parent'].get(co_ordinate, None) is not None and 'path' not in draw_description:
         (x1, y1) = co_ordinate
         (x2, y2) = draw_description['parent'][co_ordinate]
         if x2 == x1 + 1:
-            point = ">"
-        if x2 == x1 - 1:
             point = "<"
+        if x2 == x1 - 1:
+            point = ">"
         if y2 == y1 + 1:
-            point = "v"
-        if y2 == y1 - 1:
             point = "^"
+        if y2 == y1 - 1:
+            point = "v"
     if 'start' in draw_description and co_ordinate == draw_description['start']:
         point = "St"
     elif 'goal' in draw_description and co_ordinate == draw_description['goal']:
         point = "En"
     elif co_ordinate in graph.walls:
         point = "#"
+    elif 'path' in draw_description and co_ordinate in draw_description['path'] :
+        (x1, y1) = co_ordinate
+        (x2, y2) = draw_description['parent'][co_ordinate]
+        if x2 == x1 + 1:
+            point = "<"
+        if x2 == x1 - 1:
+            point = ">"
+        if y2 == y1 + 1:
+            point = "^"
+        if y2 == y1 - 1:
+            point = "v"
+
     return point
 
 
@@ -118,7 +130,18 @@ def draw_grid(graph, **draw_description) -> None:
     for y in range(graph.height):
         for x in range(graph.width):
             print("%2s" % draw_tile(graph, (x, y), draw_description), end=" ")
+        print()
 
+
+def Shortest_path(came_from: dict, start: Tuple[int, int], goal: Tuple[int, int]) -> List[int]:
+    current = goal
+    path = []
+    while current != start:
+        path.append(current)
+        current = came_from[current]
+    path.append(start) # optional
+    path.reverse() # optional
+    return path
 
 grid: Grid = Grid(10, 10)
 grid.walls = [(1, 7), (1, 8), (2, 7), (2, 8), (3, 7), (3, 8)]
@@ -137,3 +160,4 @@ draw_grid(grid, parent=parent, start=start, goal=goal)
 print()
 draw_grid(grid, cost=cost, start=start, goal=goal)
 print()
+draw_grid( grid, parent = parent, start=start, goal=goal, path=Shortest_path( parent, start=(2, 4), goal=(4, 9) ) )
