@@ -134,13 +134,12 @@ def draw_grid(graph, **draw_description) -> None:
 
 
 def Shortest_path(came_from: dict, start: Tuple[int, int], goal: Tuple[int, int]) -> List[int]:
-    current = goal
-    path = []
+    current: Tuple[int, int] = goal
+    path: List[int] = []
     while current != start:
         path.append(current)
         current = came_from[current]
-    path.append(start) # optional
-    path.reverse() # optional
+    path.append(start)
     return path
 
 grid: Grid = Grid(10, 10)
