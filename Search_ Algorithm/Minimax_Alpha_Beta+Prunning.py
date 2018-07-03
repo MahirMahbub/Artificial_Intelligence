@@ -3,7 +3,7 @@ from typing import List
 
 
 def mini_max(depth: int, node: int, min_max_check: bool, values: List[int], tree_height: int, alpha: float,
-             beta: float):
+             beta: float) -> float:
     if depth == tree_height:
         return values[node]
     if min_max_check:
