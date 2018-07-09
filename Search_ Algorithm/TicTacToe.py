@@ -188,15 +188,10 @@ class App( QWidget ):
                 boardcopy = copy.deepcopy(board)
                 x, y = self.findbestmove(boardcopy)
                 global won
-                if won == "C":
-                    self.label.setText("Computer Won")
-                    print("Computer Won")
-                    return
-                if won == "H":
-                    self.label.setText( "Human Won" )
-                    print( "Human Won" )
-                    return
 
+                if not self.isMovesLeft(board):
+                    self.label.setText( "Draw" )
+                    return
                 board[x][y]=1
                 #button.setText( '0' )
                 if x == 0 and y == 0:
@@ -218,6 +213,14 @@ class App( QWidget ):
                 elif x == 2 and y == 2:
                     self.button9.setText('0')
                 counter +=1
+                if won == "C" or self.won_game(board)==-10:
+                    self.label.setText("Computer Won")
+                    print("Computer Won")
+                    return
+                if won == "H" or self.won_game(board)==10:
+                    self.label.setText( "Human Won" )
+                    print( "Human Won" )
+                    return
 
         print(counter)
 
