@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jul  3 17:49:38 2018
 
-@author: Sand Boa
-"""
+
 import copy
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QSizePolicy
@@ -32,7 +28,9 @@ class App( QWidget ):
         self.label.resize(110,30)
         self.label.move(90, 40)
         global counter
-
+        global board
+        global player
+        global opponent
         self.button1 = QPushButton( self )
         self.button1.resize( 42, 32 )
         self.button1.setToolTip( 'This is an example button' )
@@ -50,7 +48,7 @@ class App( QWidget ):
         self.button2.resize( 42, 32 )
         self.button2.setToolTip( 'This is an example button' )
         self.button2.move( 120, 70 )
-        print( counter )
+        #print( counter )
         if not self.button2.text() == '0' and not self.button2.text() == 'X':
             if counter % 2 == 0:
                 self.button2.clicked.connect( partial( self.labeltext, "button2", self.button2) )
@@ -64,7 +62,7 @@ class App( QWidget ):
         self.button3.resize( 42, 32 )
         self.button3.setToolTip( 'This is an example button' )
         self.button3.move( 160, 70 )
-        print( counter )
+        #print( counter )
         if not self.button3.text() == '0' and not self.button3.text() == 'X':
             if counter % 2 == 0:
                 self.button3.clicked.connect( partial( self.labeltext, "button3", self.button3 ) )
@@ -78,7 +76,7 @@ class App( QWidget ):
         self.button4.setToolTip( 'This is an example button' )
         self.button4.move( 80, 100 )
         # self.button2.clicked.connect(self.on_click)
-        print( counter )
+        #print( counter )
         if not self.button4.text() == '0' and not self.button4.text() == 'X':
             if counter % 2 == 0:
                 self.button4.clicked.connect( partial( self.labeltext, "button4", self.button4) )
@@ -92,7 +90,7 @@ class App( QWidget ):
         self.button5.setToolTip( 'This is an example button' )
         self.button5.move( 120, 100 )
         # self.button2.clicked.connect(self.on_click)
-        print( counter )
+        #print( counter )
         if not self.button5.text() == '0' and not self.button5.text() == 'X':
             if counter % 2 == 0:
                 self.button5.clicked.connect( partial( self.labeltext, "button5", self.button5 ) )
@@ -105,7 +103,7 @@ class App( QWidget ):
         self.button6.resize( 42, 32 )
         self.button6.setToolTip( 'This is an example button' )
         self.button6.move( 160, 100 )
-        print( counter )
+        #print( counter )
         if not self.button6.text() == '0' and not self.button6.text() == 'X':
             if counter % 2 == 0:
                 self.button6.clicked.connect( partial( self.labeltext, "button6", self.button6 ) )
@@ -118,7 +116,7 @@ class App( QWidget ):
         self.button7.resize( 42, 32 )
         self.button7.setToolTip( 'This is an example button' )
         self.button7.move( 80, 130 )
-        print( counter )
+        #print( counter )
         if not self.button7.text() == '0' and not self.button7.text() == 'X':
             if counter % 2 == 0:
                 self.button7.clicked.connect( partial( self.labeltext, "button7", self.button7 ) )
@@ -131,7 +129,7 @@ class App( QWidget ):
         self.button8.resize( 42, 32 )
         self.button8.setToolTip( 'This is an example button' )
         self.button8.move( 120, 130 )
-        print( counter )
+        #print( counter )
         if not self.button8.text() == '0' and not self.button8.text() == 'X':
             if counter % 2 == 0:
                 self.button8.clicked.connect( partial( self.labeltext, "button8", self.button8 ) )
@@ -144,7 +142,7 @@ class App( QWidget ):
         self.button9.resize(42, 32)
         self.button9.setToolTip( 'This is an example button' )
         self.button9.move( 160, 130 )
-        print( counter )
+        #print( counter )
         if not self.button9.text() == '0' and not self.button6.text() == 'X':
             if counter % 2 == 0:
                 self.button9.clicked.connect( partial( self.labeltext, "button9", self.button9 ) )
@@ -219,28 +217,27 @@ class App( QWidget ):
                     self.button9.setText('0')
                 counter +=1
 
-        print(counter)
-
-    def isMovesLeft(self,board):
-        for i in range(3):
-            for j in range(3):
-                if board[i][j]== 0:
+    def isMovesLeft(self, board):
+        for i in range( 3 ):
+            for j in range( 3 ):
+                if board[i][j] == 0:
                     return True
         return False
 
-    def won_game(self, board):
+    def evaluate(self, board):
         global player
         global opponent
-        for i in range(3):
-            if board[i][0] == board[i][1] and board [i][1]== board [i][2]:
-                if board [i][0] == player:
+        for i in range( 3 ):
+            if board[i][0] == board[i][1] and board[i][1] == board[i][2]:
+                if board[i][0] == player:
                     return +10
                 elif board[i][0] == opponent:
                     return -10
-            if board[0][i] == board[1][i] and board[1][i] == board[2][i]:
-                if board[0][i] == player:
+        for j in range( 3 ):
+            if board[0][j] == board[1][j] and board[1][j] == board[2][j]:
+                if board[0][j] == player:
                     return +10
-                elif board[0][i] == opponent:
+                elif board[0][j] == opponent:
                     return -10
         if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
             if board[0][0] == player:
@@ -250,26 +247,26 @@ class App( QWidget ):
         if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
             if board[0][2] == player:
                 return +10
-            elif board [0][2] ==opponent:
+            elif board[0][2] == opponent:
                 return -10
         return 0
 
     def minimax(self, board, depth, maxmin):
-        score = self.won_game(board)
-        print(score)
+        score = self.evaluate( board )
+        # print(player)
         if score == 10:
             return 10
         if score == -10:
             return -10
-        if self.isMovesLeft(board):
+        if self.isMovesLeft( board ) == False:
             return 0
         if maxmin:
             best = -100000
-            for i in range(3):
-                for j in range(3):
+            for i in range( 3 ):
+                for j in range( 3 ):
                     if board[i][j] == 0:
-                        board[i][j] = 1
-                        best = max( best,self.minimax(board, depth+1, not maxmin) )
+                        board[i][j] = player
+                        best = max( best, self.minimax( board, depth + 1, not maxmin ) )
                         board[i][j] = 0
             return best
         else:
@@ -277,27 +274,30 @@ class App( QWidget ):
             for i in range( 3 ):
                 for j in range( 3 ):
                     if board[i][j] == 0:
-                        board[i][j] = 2
-                        print("Here")
+                        board[i][j] = opponent
+                        # print("Here")
                         best = min( best, self.minimax( board, depth + 1, not maxmin ) )
                         board[i][j] = 0
             return best
+
     def findbestmove(self, board):
         best_val = -100000
-        x=-1
-        y=-1
+        # print("Board")
+        print( board )
+        x = -1
+        y = -1
         global won
         for i in range( 3 ):
             for j in range( 3 ):
                 if board[i][j] == 0:
-                    board[i][j] = 2
+                    board[i][j] = player
                     best = self.minimax( board, 0, False )
-                    #print(best)
+                    # print(best)
                     board[i][j] = 0
                     if best > best_val:
+                        x = i
+                        y = j
                         best_val = best
-                        x=i
-                        y=j
                     # if best_val ==10:
                     #     print("Computer Won")
                     #     #exit()
@@ -308,15 +308,19 @@ class App( QWidget ):
                     #
                     #     won = "H"
                     #     return (9,9)
-                    #     #exit()
-        print(x,y)
-        return (x,y)
-if __name__ == '__main__':
-    player = 2
-    opponent = 1
-    counter = 0
-    won = 0
-    board = [[0,0,0], [0,0,0], [0,0,0]]
-    app = QApplication( sys.argv )
-    ex = App()
-    sys.exit( app.exec_() )
+                    #     exit()
+        print( x, y )
+        return (x, y)
+
+
+
+# board = [[2,1,2],[1,1,2],[0,0,0]]
+counter = 0
+player = 2
+opponent = 1
+app = QApplication( sys.argv )
+ex = App()
+sys.exit( app.exec_() )
+
+# bestMove = findbestmove(board)
+# print(bestMove)
